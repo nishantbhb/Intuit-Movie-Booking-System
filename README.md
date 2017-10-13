@@ -17,3 +17,6 @@ This is a standalone JAVA application which will give the user 4 choices:<br>
     <LI>For cancellation, the user has to enter valid booking_id. Using this the booking will be cancelled and the seats will be freed.    
 </UL>
 <B>All the checks for input and exception handling is done.
+
+<B>Assumption:
+> There are only 16 seats in each screen.
