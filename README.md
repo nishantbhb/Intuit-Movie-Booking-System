@@ -1,5 +1,5 @@
 # Intuit-Movie-Booking-System
-A console based movie booking system in JAVA.<br>
+A console based movie booking system in JAVA using Spring Boot and HSQLDB.<br>
 This is a standalone JAVA application which will give the user 4 choices:<br>
 1. Check Seats Available
 2. Book Seats
