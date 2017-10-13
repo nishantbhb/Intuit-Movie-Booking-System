@@ -148,7 +148,7 @@ public class BookSeat {
 		});
 	}
 
-	private void createBookingId(UUID booking_id, int show_id, List<Integer> bookSeats) {
+	public void createBookingId(UUID booking_id, int show_id, List<Integer> bookSeats) {
 		String sql = "insert into booking values( ?, ?, ? )";
 
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {

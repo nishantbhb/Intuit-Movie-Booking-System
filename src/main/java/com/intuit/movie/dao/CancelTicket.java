@@ -45,7 +45,7 @@ public class CancelTicket {
 
 	}
 
-	private void freeSeats(int show_id, List<Integer> seats) {
+	public void freeSeats(int show_id, List<Integer> seats) {
 		String sql = "update movie_show set status = 1 where show_id = ? and seat = ?";
 
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -65,7 +65,7 @@ public class CancelTicket {
 		});
 	}
 
-	private void deleteBooking(UUID booking_id) {
+	public void deleteBooking(UUID booking_id) {
 		jdbcTemplate.update("DELETE FROM BOOKING WHERE BOOKING_ID = ?", new Object[] { booking_id });
 		System.out.println("Booking Cancelled!!!");
 
