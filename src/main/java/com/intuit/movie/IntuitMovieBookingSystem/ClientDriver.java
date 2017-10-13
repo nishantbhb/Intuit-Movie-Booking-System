@@ -21,10 +21,10 @@ public class ClientDriver {
 	BookSeat bs;
 
 	public void PrintChoice() {
-		
+
 		int choice = 0;
 		do {
-		
+
 			Scanner s = new Scanner(System.in);
 			System.out.println("------------------------------------------");
 			System.out.println("Hello There!!! Select choice!!!");
@@ -56,11 +56,11 @@ public class ClientDriver {
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("Enter a valid number.");
-				
+
 			}
 
 		} while (choice != 4);
-		
+
 	}
 
 }
