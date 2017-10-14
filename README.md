@@ -6,8 +6,9 @@ This is a standalone JAVA application which will give the user 4 choices:<br>
 3. Cancel Booking
 4. Exit
 <UL>
-  <LI>User can select any of the 4 options.
-  <LI>Before booking the seat, user has to check seats available and take note of the show_id to proceed with seat booking.
+  <LI>User can select any of the 4 options
+  <LI>There are multiplse screens and multiple shows in each theatre.
+  <LI>During Booking, user has to check seats available and take note of the show_id to proceed with seat booking.
   <LI>When user selects choice 1, he gets the list of movies and its details.
   <LI>The next selection user does for movie and gets to see all the show details along with number of seats available.
   <LI>User gets to see the seat_map only after selecting the show and number of tickets.
