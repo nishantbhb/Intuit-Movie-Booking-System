@@ -20,27 +20,40 @@ public class CancelTicket {
 
 	@SuppressWarnings("resource")
 	public void freeTicket() {
-		System.out.println("Enter booking id: ");
-		Scanner s = new Scanner(System.in);
-		try {
-			UUID booking_id = UUID.fromString(s.nextLine());
+		boolean flag = true;
+		while (flag) {
+			System.out.println("------------------");
+			System.out.println("Enter 100 to exit!!!");
+			System.out.println("Enter booking id: ");
+			Scanner s = new Scanner(System.in);
+			try {
+				String choice = s.nextLine();
 
-			int show_id = jdbcTemplate.queryForObject("SELECT distinct (SHOW_ID) FROM BOOKING WHERE BOOKING_ID = ?",
-					new Object[] { booking_id }, Integer.class);
-			// System.out.println(show_id);
+				try {
+					if (Integer.parseInt(choice) == 100) {
+						flag = false;
+						continue;
+					}
+				} catch (IllegalArgumentException e) {
+					System.out.println("Checking in DB....!!!");
+				}
+				UUID booking_id = UUID.fromString(choice);
 
-			// Map<Integer, List<Integer>> seat_Map;
+				int show_id = jdbcTemplate.queryForObject("SELECT distinct (SHOW_ID) FROM BOOKING WHERE BOOKING_ID = ?",
+						new Object[] { booking_id }, Integer.class);
 
-			String sql = "Select seat from booking where booking_id = ?";
-			List<Integer> seats = jdbcTemplate.queryForList(sql, new Object[] { booking_id }, Integer.class);
+				String sql = "Select seat from booking where booking_id = ?";
+				List<Integer> seats = jdbcTemplate.queryForList(sql, new Object[] { booking_id }, Integer.class);
 
-			freeSeats(show_id, seats);
-			deleteBooking(booking_id);
+				freeSeats(show_id, seats);
+				deleteBooking(booking_id);
+				flag = false;
 
-		} catch (EmptyResultDataAccessException e) {
-			System.out.println("Invalid Booking_Id.");
-		} catch (IllegalArgumentException e) {
-			System.out.println("Enter booking_id in valid format");
+			} catch (EmptyResultDataAccessException e) {
+				System.out.println("Invalid Booking_Id.");
+			} catch (IllegalArgumentException e) {
+				System.out.println("Enter booking_id in valid format");
+			}
 		}
 
 	}

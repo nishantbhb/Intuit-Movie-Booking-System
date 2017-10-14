@@ -25,6 +25,9 @@ public class BookSeat {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
+	@Autowired
+	CheckSeatsAvailable csa;
+
 	@SuppressWarnings("resource")
 	public void selectSeat() {
 		String sql = "Select show_id, count(*) from movie_show where status = 1 group by show_id";
@@ -56,70 +59,95 @@ public class BookSeat {
 		while (flag) {
 			Scanner s = new Scanner(System.in);
 			try {
-				System.out.println("Enter Show_Id: ");
-				int show_id = s.nextInt();
-				System.out.println("Enter no. of tickets: ");
-				int ticketCnt = s.nextInt();
-				if (show_ids.containsKey(show_id)) {
-					if (show_ids.get(show_id) >= ticketCnt) {
+				System.out.println("---------------------------");
+				System.out.println("Press 1 if you know show_id");
+				System.out.println("Press 2 to check shows");
+				System.out.println("Press 100 to go to main menu");
+				System.out.println("---------------------------");
+				System.out.println("Enter choice:");
+				int choice = s.nextInt();
+				if (choice == 2) {
+					csa.showMovies();
+					flag = false;
+				} else if (choice == 1) {
+					System.out.println("Press 100 to Exit!!!");
+					System.out.println("Enter Show_Id: ");
+					int show_id = s.nextInt();
+					if (show_id == 100)
 						flag = false;
-						System.out.println("Select Seats:");
-						System.out.println("---------------------");
-						System.out.println("---Screen this way---");
-						int seats[] = new int[16];
-						for (int i : seat_Map.get(show_id))
-							seats[i - 1] = i;
+					else if (show_ids.containsKey(show_id)) {
+						System.out.println("Press 100 to Exit!!!");
+						System.out.println("Enter no. of tickets: ");
+						int ticketCnt = s.nextInt();
+						if (ticketCnt == 100)
+							flag = false;
+						else if (show_ids.get(show_id) >= ticketCnt) {
+							flag = false;
+							System.out.println("Select Seats:");
+							System.out.println("---------------------");
+							System.out.println("---Screen this way---");
+							int seats[] = new int[16];
+							for (int i : seat_Map.get(show_id))
+								seats[i - 1] = i;
 
-						for (int i = 0; i < 16; i++) {
-							System.out.print(seats[i] + " ");
-							if ((i + 1) % 4 == 0)
-								System.out.println();
-						}
-						List<Integer> bookSeats = new ArrayList<>();
-						for (int i = 1; i <= ticketCnt; i++) {
-							boolean flg = true;
-							while (flg) {
-								System.out.print("Enter seat no. " + i + ": ");
-								try {
-									s = new Scanner(System.in);
-									int seatNo = s.nextInt();
-									if (seat_Map.get(show_id).contains(seatNo)) {
-										if (bookSeats.contains(seatNo))
-											System.out.println("You already selected this seat. Try again a new seat.");
-										else {
-											flg = false;
-											bookSeats.add(seatNo);
+							for (int i = 0; i < 16; i++) {
+								System.out.print(seats[i] + " ");
+								if ((i + 1) % 4 == 0)
+									System.out.println();
+							}
+							List<Integer> bookSeats = new ArrayList<>();
+							for (int i = 1; i <= ticketCnt; i++) {
+								boolean flg = true;
+								while (flg) {
+									System.out.print("Enter seat no. " + i + ": ");
+									try {
+										s = new Scanner(System.in);
+										int seatNo = s.nextInt();
+										if (seat_Map.get(show_id).contains(seatNo)) {
+											if (bookSeats.contains(seatNo))
+												System.out.println(
+														"You already selected this seat. Try again a new seat.");
+											else {
+												flg = false;
+												bookSeats.add(seatNo);
+											}
+										} else {
+											System.out.println("Enter a valid seat no.");
 										}
-									} else {
-										System.out.println("Enter a valid seat no.");
-									}
-								} catch (InputMismatchException e) {
-									System.out.println("Seat Number must be a number.");
+									} catch (InputMismatchException e) {
+										System.out.println("Seat Number must be a number.");
 
+									}
 								}
 							}
-						}
-						UUID booking_id = UUID.randomUUID();
-						blockSeats(show_id, bookSeats);
-						createBookingId(booking_id, show_id, bookSeats);
-						sql = "SELECT c.movie_name, b.theatre_name, b.location, a.screen_id, a.show_time from movies c natural join movie_show A NATURAL JOIN theatre B where A.show_id = ? GROUP BY c.movie_name, b.theatre_name, b.location, a.screen_id, a.show_time";
-						Object show[] = { show_id };
-						Booking_Details bd = jdbcTemplate.queryForObject(sql, show, new RowMapper<Booking_Details>() {
-							@Override
-							public Booking_Details mapRow(ResultSet rs, int rowNum) throws SQLException {
-								return new Booking_Details(booking_id, rs.getString(1), rs.getString(2),
-										rs.getString(3), rs.getString(4), rs.getString(5), bookSeats);
-							}
-						});
-						System.out.println("Ticket Booked!!!");
-						System.out.println(bd.toString());
+							UUID booking_id = UUID.randomUUID();
+							blockSeats(show_id, bookSeats);
+							createBookingId(booking_id, show_id, bookSeats);
+							sql = "SELECT c.movie_name, b.theatre_name, b.location, a.screen_id, a.show_time from movies c natural join movie_show A NATURAL JOIN theatre B where A.show_id = ? GROUP BY c.movie_name, b.theatre_name, b.location, a.screen_id, a.show_time";
+							Object show[] = { show_id };
+							Booking_Details bd = jdbcTemplate.queryForObject(sql, show,
+									new RowMapper<Booking_Details>() {
+										@Override
+										public Booking_Details mapRow(ResultSet rs, int rowNum) throws SQLException {
+											return new Booking_Details(booking_id, rs.getString(1), rs.getString(2),
+													rs.getString(3), rs.getString(4), rs.getString(5), bookSeats);
+										}
+									});
+							System.out.println("Ticket Booked!!!");
+							System.out.println("Please make payment at the theatre.");
+							System.out.println(bd.toString());
 
+						} else {
+							System.out.println(
+									"This show has only " + show_ids.get(show_id) + " seats available. Try Again!");
+						}
 					} else {
-						System.out.println(
-								"This show has only " + show_ids.get(show_id) + " seats available. Try Again!");
+						System.out.println("Enter a valid show_id. Try Again!");
 					}
+				} else if (choice == 100) {
+					flag = false;
 				} else {
-					System.out.println("Enter a valid show_id. Try Again!");
+					System.out.println("Enter a valid option");
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("Input must be a number.");
