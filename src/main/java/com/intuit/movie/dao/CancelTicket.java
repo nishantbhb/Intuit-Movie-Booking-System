@@ -68,7 +68,6 @@ public class CancelTicket {
 				int seatNo = seats.get(i);
 				ps.setInt(1, show_id);
 				ps.setInt(2, seatNo);
-
 			}
 
 			@Override
