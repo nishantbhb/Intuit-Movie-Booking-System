@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { BookSeat.class, InstantiateDB.class, CancelTicket.class })
+@SpringBootTest(classes = { BookSeat.class, InstantiateDB.class, CancelTicket.class, CheckSeatsAvailable.class })
 public class BookAndCancelSeatsTests {
 
 	private UUID booking_id;
